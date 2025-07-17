@@ -157,4 +157,5 @@ public class Network {
 
         return inputData; // Return final output from the last layer
     }
+
 }

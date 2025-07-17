@@ -1,5 +1,6 @@
 package data_interface;
 
+import engine.TrainingToken;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
@@ -59,5 +60,40 @@ public class DataTank {
     // Get random CSV data for any digit
     public ArrayList<Integer> getRandomData() {
         return getRandomData( (int) (rand.nextDouble() * 10));
+    }
+
+    // Get balanced list of training tokens (non-randomized distribution)
+    public ArrayList<TrainingToken> getTokenSet(int numberOfTokens) {
+
+        // TrainingToken list
+        ArrayList<TrainingToken> tokens = new ArrayList<>();
+
+        int i = (int) (rand.nextDouble() * 10); // Counter used to increment the digit of each token
+        while (tokens.size() < numberOfTokens) {
+
+            // Expectation CSV array conversion
+            double[] activationExpectation = new double[10];
+            activationExpectation[i] = 1;
+
+            // Digit CSV array conversion (255 compression)
+            double[] postData = new double[784]; // TODO: SPECIFICALLY SET FOR 28x28
+            ArrayList<Integer> preData = getRandomData(i);
+            for (int j = 0; j < preData.size(); j++) {
+                postData[j] = preData.get(j) / 255.0;
+            }
+
+            // Add token
+            tokens.add(new TrainingToken(postData, activationExpectation));
+
+            // Increment digit counter
+            if (i == 9) {
+                i = 0;
+            }
+            else {
+                i++;
+            }
+        }
+
+        return tokens;
     }
 }

@@ -17,6 +17,18 @@ public class Viewer {
         this.px_height = px_height;
     }
 
+    // Secondary method for use with ArrayList TODO: TEMP INFLATION METHOD
+    public BufferedImage buildImage(double[] csvArray) {
+
+        ArrayList<Integer> csvList = new ArrayList<>();
+
+        for (int i = 0; i < csvArray.length; i++) {
+            csvList.add((int) (csvArray[i] * 255));
+        }
+
+        return buildImage(csvList);
+    }
+
     // Process a csv line and return an image
     public BufferedImage buildImage(ArrayList<Integer> csvList) {
         // Check for valid dimensions

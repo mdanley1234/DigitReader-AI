@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 /**
  * The network class holds all the layers of the neural network
@@ -67,17 +68,56 @@ public class Network {
                     try (FileWriter fw = new FileWriter(file)) {
                         
                         // Write header data
-                        fw.write("NETWORK CONFIGURATION FILE: /layer_values\n\n");
-                        fw.write("----------------------------------------\n");
-                        fw.write("Layer ##.csv - parameterSize - layerSize\n");
-                        fw.write("----------------------------------------\n\n");
+                        fw.write("NETWORK CONFIGURATION FILE: " + networkFilePath + "\n\n");
+                        fw.write("---------------------------------------\n");
+                        fw.write("Layer #.csv - parameterSize - layerSize\n");
+                        fw.write("---------------------------------------\n\n");
                         fw.write("BEGIN\n");
 
                         // Request user input for layer configuration
+                        Scanner scan = new Scanner(System.in);
+                        System.out.print("New network config detected. Please enter layer count: ");
+                        int layerCount = Integer.parseInt(scan.nextLine().trim());
 
+                        // Check layer count validity
+                        if (layerCount <= 0) {
+                            scan.close();
+                            throw new IllegalArgumentException("Layer count must be greater than 0.");
+                        }
+
+                        // Request token count for layer zero
+                        System.out.print("Please enter number of tokens for network: ");
+                        int tokenCount = Integer.parseInt(scan.nextLine().trim());
+
+                        // Check token count validity
+                        if (tokenCount <= 0) {
+                            scan.close();
+                            throw new IllegalArgumentException("Layer count must be greater than 0.");
+                        }
+
+                        // Request layerSize (neuron count) for each layer
+                        for (int i = 0; i < layerCount; i++) {
+                            System.out.print("Layer " + (i) + " layerSize (neuron count): ");
+                            int layerSize = Integer.parseInt(scan.nextLine().trim());
+
+                            // Write layer configuration data to file
+                            if (i == 0) {
+                                // For the first layer, use tokenCount as parameterSize
+                                fw.write(i + ".csv - " + tokenCount + " - " + layerSize + "\n");
+                                layers.add(new Layer(tokenCount, layerSize, networkFilePath + "/" + i + ".csv"));
+                            } else {
+                                // For subsequent layers, use previous layerSize as parameterSize
+                                int previousLayerSize = layers.get(i - 1).getLayerSize();
+                                fw.write(i + ".csv - " + previousLayerSize + " - " + layerSize + "\n");
+                                layers.add(new Layer(previousLayerSize, layerSize, networkFilePath + "/" + i + ".csv"));
+                            }
+                        }
+                        fw.write("END");
+                        scan.close();
+                        System.out.println("Configuration complete.");
+                        
+                        // TODO: ADD CHECKSUM HASH
                     }
-
-
 
                 }
             } catch (IOException ex) {
@@ -93,6 +133,28 @@ public class Network {
             System.exit(4); // Config file format error
         }
 
+        // Print network data
+        System.out.println("-------------------\nNETWORK INITIALIZED\n-------------------");
+        System.out.println("Network successfully initialized with " + layers.size() + " layers.");
+        for (int i = 0; i < layers.size(); i++) {
+            Layer layer = layers.get(i);
+            System.out.println("Layer " + i + " - layerSize: " + layer.getLayerSize() + ", parameterSize: " + layer.getParameterSize());
+        }
     }
 
+    // Process token data through the network
+    public double[] processTokenData(double[] tokenData) {
+        if (tokenData.length != layers.get(0).getParameterSize()) {
+            throw new IllegalArgumentException("Token data size must match the first layer's parameter size.");
+        }
+
+        double[] inputData = tokenData;
+
+        // Process through each layer
+        for (Layer layer : layers) {
+            inputData = layer.calculateActivationLayer(inputData);
+        }
+
+        return inputData; // Return final output from the last layer
+    }
 }

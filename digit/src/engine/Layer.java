@@ -149,4 +149,17 @@ public class Layer {
             System.err.println("Error writing to file: " + e.getMessage());
         }
     }
+
+    // Getters for layer properties
+
+    public int getParameterSize() {
+        return parameterSize;
+    }
+
+    public int getLayerSize() {
+        return layerSize;
+    }
+
+
+    
 }

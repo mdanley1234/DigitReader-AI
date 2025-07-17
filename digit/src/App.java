@@ -1,7 +1,7 @@
 import data_interface.DataTank;
+import data_interface.DigitToken;
 import data_interface.Viewer;
 import engine.Network;
-import engine.TrainingToken;
 
 public class App {
     public static void main(String[] args) throws Exception {
@@ -9,17 +9,19 @@ public class App {
         // Initialize DataTank and Viewer
         DataTank dataTank = new DataTank("digit/lib/mnist_train.csv");
         Viewer viewer = new Viewer(28, 28);
-
     
-        // Initialize the neural network and process the token data
-        Network network = new Network("digit/src/engine/network_data");
-        TrainingToken testToken = dataTank.getTokenSet(1).get(0);
+        // Request token data
+        DigitToken token = dataTank.getToken();
+        System.out.println("Token digit: " + token.getDigit());
 
-        // Save built image to a file
-        java.awt.image.BufferedImage img = viewer.buildImage(testToken.getTokenData());
+        // Initialize the neural network
+        Network network = new Network("digit/src/engine/network_data");
+
+        // Save token image data to output.png file
+        java.awt.image.BufferedImage img = viewer.buildImage(token);
         javax.imageio.ImageIO.write(img, "png", new java.io.File("output.png"));
 
-        double[] output = network.processTokenData(testToken.getTokenData());
+        double[] output = network.processToken(token);
         System.out.println("\n\n" + java.util.Arrays.toString(output));
     }
 }

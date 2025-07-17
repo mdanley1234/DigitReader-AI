@@ -35,8 +35,7 @@ public class Network {
                 if (line.contains("BEGIN")) {
                     readData = true;
                     line = br.readLine(); // Read the next line to get the first layer configuration
-                }
-                else if (line.contains("END")) {
+                } else if (line.contains("END")) {
                     readData = false;
                 }
 
@@ -66,7 +65,7 @@ public class Network {
                     file.createNewFile();
 
                     try (FileWriter fw = new FileWriter(file)) {
-                        
+
                         // Write header data
                         fw.write("NETWORK CONFIGURATION FILE: " + networkFilePath + "\n\n");
                         fw.write("---------------------------------------\n");
@@ -115,7 +114,7 @@ public class Network {
                         fw.write("END");
                         scan.close();
                         System.out.println("Configuration complete.");
-                        
+
                         // TODO: ADD CHECKSUM HASH
                     }
 
@@ -143,19 +142,20 @@ public class Network {
     }
 
     // Process token data through the network
-    public double[] processTokenData(double[] tokenData) {
-        if (tokenData.length != layers.get(0).getParameterSize()) {
+    public double[] processToken(Token token) {
+        if (token.getTokenData().length != layers.get(0).getParameterSize()) {
             throw new IllegalArgumentException("Token data size must match the first layer's parameter size.");
         }
 
-        double[] inputData = tokenData;
+        // Save data to temporary array
+        double[] inputData = token.getExpectationData();
 
         // Process through each layer
         for (Layer layer : layers) {
             inputData = layer.calculateActivationLayer(inputData);
         }
 
-        return inputData; // Return final output from the last layer
+        // Return final output from the last layer
+        return inputData;
     }
-
 }

@@ -1,0 +1,16 @@
+NETWORK CONFIGURATION FILE: digit/src/network_data/large_model
+
+---------------------------------------
+Layer #.csv - parameterSize - layerSize
+---------------------------------------
+
+BEGIN
+0.csv - 784 - 64
+1.csv - 64 - 32
+2.csv - 32 - 24
+3.csv - 24 - 24
+4.csv - 24 - 18
+5.csv - 18 - 12
+6.csv - 12 - 12
+7.csv - 12 - 10
+END

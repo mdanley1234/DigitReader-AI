@@ -1,0 +1,11 @@
+NETWORK CONFIGURATION FILE: digit/src/network_data/small_model
+
+---------------------------------------
+Layer #.csv - parameterSize - layerSize
+---------------------------------------
+
+BEGIN
+0.csv - 784 - 12
+1.csv - 12 - 12
+2.csv - 12 - 10
+END

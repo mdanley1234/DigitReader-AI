@@ -32,3 +32,10 @@ digit/
 
 ## Model Analysis
 The modular neural network approach is flexible and efficient. Simply create a folder under network_data and instantiate a new Network object at the folder location. A config file and relevant data files will be created. Training data can be fed via tokens into the network via the trainer to automatically adjust weights and bias values. This repository already contains two example networks: small_model and large_model. small_model yields an accuracy of ~92% while large_model can achieve ~98% accuracy.
+
+### Sources
+
+- [A Step by Step Backpropagation Example](https://mattmazur.com/2015/03/17/a-step-by-step-backpropagation-example/)
+- [Backpropagation in Neural Network (GeeksforGeeks)](https://www.geeksforgeeks.org/machine-learning/backpropagation-in-neural-network/)
+- [3Blue1Brown: Neural Networks](https://www.3blue1brown.com/topics/neural-networks)
+- [Yann LeCun's MNIST Database](http://yann.lecun.com/exdb/mnist)

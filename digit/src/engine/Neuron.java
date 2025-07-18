@@ -5,6 +5,12 @@ package engine;
  */
 public class Neuron {
 
+    // Store last activation value for backpropagation
+    private double activationValue = 0.0;
+
+    // Store input token data for the neuron to calculate weight adjustments
+    private double[] inputData;
+
     // Number of weight parameters for the neuron
     private final int parameterSize;
 
@@ -24,6 +30,7 @@ public class Neuron {
 
     // Calculate neuron activation value (0,1) from input data
     public double calculateActivation(double[] inputData) {
+        this.inputData = inputData;
         if (inputData.length != parameterSize) {
             throw new IllegalArgumentException("Input data size must match parameter size.");
         }
@@ -34,10 +41,32 @@ public class Neuron {
         }
 
         // Apply activation function (sigmoid)
-        return 1 / (1 + Math.exp(-activation));
+        activationValue = 1 / (1 + Math.exp(-activation));
+        return activationValue;
     }
 
     // TODO: Add method that applies deltas to the tuning values (weights and bias)
+
+    // Calculate the error delta for the neuron and returns an array of (errorDelta * weights)
+    // Parameter requires the derivative of the cost function from the previous layer
+    // For output layer use the (cost matrix), for hidden layers use sum (errorDelta * weights)
+    public double[] calculateDelta(double derivativeInput) {
+        double delta = activationValue * (1 - activationValue) * derivativeInput; // Sigmoid derivative
+
+        // Multiply by weights and return
+        double[] deltaWeights = new double[parameterSize];
+        for (int i = 0; i < parameterSize; i++) {
+            deltaWeights[i] = delta * weights[i];
+        }
+
+        // Update weights and bias
+        for (int i = 0; i < parameterSize; i++) {
+            weights[i] -= delta * inputData[i] * Trainer.LEARNING_RATE; // Update weights
+        }
+        bias -= delta * Trainer.LEARNING_RATE; // Update bias
+
+        return deltaWeights;
+    }
 
     // Tuning values setter/getter methods
     public double[] getWeights() {

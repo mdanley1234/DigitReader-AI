@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -148,6 +149,24 @@ public class Layer {
         } catch (IOException e) {
             System.err.println("Error writing to file: " + e.getMessage());
         }
+    }
+
+    // Distribution manifold for derivatives 
+    public ArrayList<double[]> calculateDerivatives(double[] derivativeMatrix) {
+        if (derivativeMatrix.length != layerSize) {
+            throw new IllegalArgumentException("Cost matrix size must match layer size.");
+        }
+
+        ArrayList<double[]> derivatives = new ArrayList<>();
+
+        // Calculate derivatives for each neuron
+        for (int i = 0; i < layerSize; i++) {
+            Neuron neuron = neurons[i];
+            double[] deltaWeights = neuron.calculateDelta(derivativeMatrix[i]);
+            derivatives.add(deltaWeights);
+        }
+
+        return derivatives;
     }
 
     // Getters for layer properties

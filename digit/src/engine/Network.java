@@ -148,7 +148,7 @@ public class Network {
         }
 
         // Save data to temporary array
-        double[] inputData = token.getExpectationData();
+        double[] inputData = token.getTokenData();
 
         // Process through each layer
         for (Layer layer : layers) {
@@ -157,5 +157,44 @@ public class Network {
 
         // Return final output from the last layer
         return inputData;
+    }
+
+    // Pass cost matrix into the final layer and backpropagate through network
+    public void backpropagate(double[] costMatrix) {
+        // Check that the cost matrix size matches the last layer's size
+        if (costMatrix.length != layers.get(layers.size() - 1).getLayerSize()) {
+            throw new IllegalArgumentException("Cost matrix size must match the last layer's size.");
+        }
+
+        // Initialize delta array for backpropagation and pass in cost matrix
+        double[] deltaDerivatives = costMatrix;
+
+        // Start from the last layer and backpropagate
+        for (int i = layers.size(); i > 0; i--) {
+            Layer layer = layers.get(i - 1);
+
+            // Extract the derivative matrix from the layer and pass in delta data
+            ArrayList<double[]> deltas = layer.calculateDerivatives(deltaDerivatives);
+
+            deltaDerivatives = new double[layer.getParameterSize()];
+            for (int j = 0; j < layer.getParameterSize(); j++) {
+                // Calculate deltaDerivative information for the next layer
+                double deltaSum = 0.0;
+                for (double[] deltaArray : deltas) {
+                    deltaSum += deltaArray[j];
+                }
+                deltaDerivatives[j] = deltaSum;
+            }
+            
+        }
+
+    }
+
+    // Network save function
+    public void saveNetwork() {
+        for (Layer layer : layers) {
+            layer.saveLayer();
+        }
+        System.out.println("Network saved successfully.");
     }
 }

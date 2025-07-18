@@ -48,4 +48,8 @@ public class Token {
         return expectationData;
     }
 
+    public boolean isTrainingToken() {
+        return trainingToken;
+    }
+
 }
